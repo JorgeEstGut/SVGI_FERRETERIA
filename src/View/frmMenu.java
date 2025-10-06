@@ -4,10 +4,15 @@
  */
 package View;
 
+import Controller.UsuariosController;
 import Custom.IconScaler;
 import Main.App;
+import Model.Trabajador;
+import Model.TrabajadorDAO;
 import Security.Permisos;
+import java.awt.Dialog;
 import java.util.Set;
+import javax.swing.JDialog;
 
 public class frmMenu extends javax.swing.JFrame {
 
@@ -19,10 +24,11 @@ public class frmMenu extends javax.swing.JFrame {
         setLocationRelativeTo(null);
         setIcons();
         aplicarPermisos(rolActual);
+        cargarUsuarios();
     }
     
     private void setIcons() {
-        int size = 24; // tamaño de los íconos
+        int size = 50;
         OpcionesLayout.setIconAt(0, IconScaler.getScaledIcon("/Resources/opIcons/Dashboard.png", size, size));
         OpcionesLayout.setIconAt(1, IconScaler.getScaledIcon("/Resources/opIcons/Productos.png", size, size));
         OpcionesLayout.setIconAt(2, IconScaler.getScaledIcon("/Resources/opIcons/Ventas.png", size, size));
@@ -32,27 +38,63 @@ public class frmMenu extends javax.swing.JFrame {
     }
 
     private void aplicarPermisos(String rol) {
-    Set<String> permisos = Permisos.getPermisos(rol);
+        Set<String> permisos = Permisos.getPermisos(rol);
 
-    if (!permisos.contains("Dashboard")) {
-        OpcionesLayout.remove(jpDashboard);
+        if (!permisos.contains("Dashboard")) {
+            OpcionesLayout.remove(jpDashboard);
+        }
+        if (!permisos.contains("Productos")) {
+            OpcionesLayout.remove(jpProductos);
+        }
+        if (!permisos.contains("Ventas")) {
+            OpcionesLayout.remove(jpVentas);
+        }
+        if (!permisos.contains("Proveedores")) {
+            OpcionesLayout.remove(jpProveedores);
+        }
+        if (!permisos.contains("Facturas")) {
+            OpcionesLayout.remove(jpFacturas);
+        }
+        if (!permisos.contains("Usuarios")) {
+            OpcionesLayout.remove(jpUsuarios);
+        }
     }
-    if (!permisos.contains("Productos")) {
-        OpcionesLayout.remove(jpProductos);
+    
+    //Cargar tabla en Panel Usuarios
+    private void cargarUsuarios() {
+        TrabajadorDAO dao = new TrabajadorDAO();
+        java.util.List<Trabajador> lista = dao.listar();
+
+        javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel();
+        modelo.setColumnIdentifiers(new Object[]{"ID", "Nombre", "Usuario", "Clave", "Rol"});
+
+        for (Trabajador t : lista) {
+            modelo.addRow(new Object[]{t.getId_trabajador(), t.getNombre(), t.getUsuario(), t.getClave(), t.getRol()});
+        }
+
+        tblUsuarios.setModel(modelo);
+        // Cambiar el tamaño de la fuente del contenido de la tabla
+        tblUsuarios.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 16)); 
+        tblUsuarios.setRowHeight(30); // Aumenta la altura de las filas
+
+        // Cambiar el tamaño de la fuente del encabezado
+        javax.swing.table.JTableHeader header = tblUsuarios.getTableHeader();
+        header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 16));
+        
+        // Centrar texto en las celdas
+        javax.swing.table.DefaultTableCellRenderer centrado = new javax.swing.table.DefaultTableCellRenderer();
+        centrado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+        for (int i = 0; i < tblUsuarios.getColumnCount(); i++) {
+            tblUsuarios.getColumnModel().getColumn(i).setCellRenderer(centrado);
+        }
     }
-    if (!permisos.contains("Ventas")) {
-        OpcionesLayout.remove(jpVentas);
+    
+    public void actualizarTablaUsuarios() {
+        cargarUsuarios();
     }
-    if (!permisos.contains("Proveedores")) {
-        OpcionesLayout.remove(jpProveedores);
-    }
-    if (!permisos.contains("Facturas")) {
-        OpcionesLayout.remove(jpFacturas);
-    }
-    if (!permisos.contains("Usuarios")) {
-        OpcionesLayout.remove(jpUsuarios);
-    }
-}
+
+
 
 
     /**
@@ -71,10 +113,16 @@ public class frmMenu extends javax.swing.JFrame {
         jpProveedores = new javax.swing.JPanel();
         jpFacturas = new javax.swing.JPanel();
         jpUsuarios = new javax.swing.JPanel();
+        jScrollUsuarios = new javax.swing.JScrollPane();
+        tblUsuarios = new javax.swing.JTable();
+        btnEliminarUsuario = new Custom.RoundButton("Eliminar Usuario");
+        btnAgregarUsuario = new Custom.RoundButton("Eliminar Usuario");
+        btnEditarUsuario = new Custom.RoundButton("Eliminar Usuario");
         brrMenu = new javax.swing.JMenuBar();
         opSalir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         OpcionesLayout.setBackground(new java.awt.Color(238, 217, 75));
         OpcionesLayout.setForeground(new java.awt.Color(0, 0, 0));
@@ -88,11 +136,11 @@ public class frmMenu extends javax.swing.JFrame {
         jpDashboard.setLayout(jpDashboardLayout);
         jpDashboardLayout.setHorizontalGroup(
             jpDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1176, Short.MAX_VALUE)
+            .addGap(0, 1040, Short.MAX_VALUE)
         );
         jpDashboardLayout.setVerticalGroup(
             jpDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGap(0, 583, Short.MAX_VALUE)
         );
 
         OpcionesLayout.addTab("Dashboard", jpDashboard);
@@ -103,11 +151,11 @@ public class frmMenu extends javax.swing.JFrame {
         jpProductos.setLayout(jpProductosLayout);
         jpProductosLayout.setHorizontalGroup(
             jpProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1176, Short.MAX_VALUE)
+            .addGap(0, 1040, Short.MAX_VALUE)
         );
         jpProductosLayout.setVerticalGroup(
             jpProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGap(0, 583, Short.MAX_VALUE)
         );
 
         OpcionesLayout.addTab("Productos", jpProductos);
@@ -118,11 +166,11 @@ public class frmMenu extends javax.swing.JFrame {
         jpVentas.setLayout(jpVentasLayout);
         jpVentasLayout.setHorizontalGroup(
             jpVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1176, Short.MAX_VALUE)
+            .addGap(0, 1040, Short.MAX_VALUE)
         );
         jpVentasLayout.setVerticalGroup(
             jpVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGap(0, 583, Short.MAX_VALUE)
         );
 
         OpcionesLayout.addTab("Ventas", jpVentas);
@@ -133,11 +181,11 @@ public class frmMenu extends javax.swing.JFrame {
         jpProveedores.setLayout(jpProveedoresLayout);
         jpProveedoresLayout.setHorizontalGroup(
             jpProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1176, Short.MAX_VALUE)
+            .addGap(0, 1040, Short.MAX_VALUE)
         );
         jpProveedoresLayout.setVerticalGroup(
             jpProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGap(0, 583, Short.MAX_VALUE)
         );
 
         OpcionesLayout.addTab("Proveedores", jpProveedores);
@@ -148,33 +196,105 @@ public class frmMenu extends javax.swing.JFrame {
         jpFacturas.setLayout(jpFacturasLayout);
         jpFacturasLayout.setHorizontalGroup(
             jpFacturasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1176, Short.MAX_VALUE)
+            .addGap(0, 1040, Short.MAX_VALUE)
         );
         jpFacturasLayout.setVerticalGroup(
             jpFacturasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGap(0, 583, Short.MAX_VALUE)
         );
 
         OpcionesLayout.addTab("Facturas", jpFacturas);
 
-        jpUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jpUsuarios.setForeground(new java.awt.Color(255, 255, 255));
+        jpUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        tblUsuarios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblUsuarios.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tblUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tblUsuarios.setEnabled(false);
+        jScrollUsuarios.setViewportView(tblUsuarios);
+
+        btnEliminarUsuario.setBackground(new java.awt.Color(51, 51, 51));
+        btnEliminarUsuario.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEliminarUsuario.setForeground(new java.awt.Color(255, 255, 255));
+        btnEliminarUsuario.setText("Eliminar Usuario");
+        btnEliminarUsuario.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEliminarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarUsuarioActionPerformed(evt);
+            }
+        });
+
+        btnAgregarUsuario.setBackground(new java.awt.Color(238, 217, 75));
+        btnAgregarUsuario.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnAgregarUsuario.setText("Nuevo Usuario");
+        btnAgregarUsuario.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAgregarUsuario.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAgregarUsuarioMouseClicked(evt);
+            }
+        });
+        btnAgregarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarUsuarioActionPerformed(evt);
+            }
+        });
+
+        btnEditarUsuario.setBackground(new java.awt.Color(255, 255, 0));
+        btnEditarUsuario.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEditarUsuario.setText("Editar Usuario");
+        btnEditarUsuario.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarUsuarioActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jpUsuariosLayout = new javax.swing.GroupLayout(jpUsuarios);
         jpUsuarios.setLayout(jpUsuariosLayout);
         jpUsuariosLayout.setHorizontalGroup(
             jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1176, Short.MAX_VALUE)
+            .addGroup(jpUsuariosLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jpUsuariosLayout.createSequentialGroup()
+                        .addComponent(btnEditarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEliminarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAgregarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 959, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         jpUsuariosLayout.setVerticalGroup(
             jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 590, Short.MAX_VALUE)
+            .addGroup(jpUsuariosLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jScrollUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 504, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(jpUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEliminarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEditarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         OpcionesLayout.addTab("Usuarios", jpUsuarios);
 
-        brrMenu.setBackground(new java.awt.Color(0, 0, 0));
+        brrMenu.setBackground(new java.awt.Color(51, 51, 51));
         brrMenu.setForeground(new java.awt.Color(255, 255, 255));
+        brrMenu.setPreferredSize(new java.awt.Dimension(38, 30));
 
+        opSalir.setForeground(new java.awt.Color(255, 255, 255));
         opSalir.setText("Salir");
         opSalir.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -198,7 +318,7 @@ public class frmMenu extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(OpcionesLayout)
+            .addComponent(OpcionesLayout, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         pack();
@@ -212,6 +332,33 @@ public class frmMenu extends javax.swing.JFrame {
         this.dispose();      
         App.abrirLogin(); 
     }//GEN-LAST:event_opSalirMouseClicked
+
+    private void btnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarUsuarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEliminarUsuarioActionPerformed
+
+    private void btnAgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarUsuarioActionPerformed
+        JDialog dialogo = new JDialog(this, "Registro de nuevo usuario", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogo.setSize(480, 620);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        // Crear el formulario y el controlador con referencia a this (frmMenu)
+        frmNuevoUsuario formulario = new frmNuevoUsuario();
+        TrabajadorDAO dao = new TrabajadorDAO();
+        UsuariosController controller = new UsuariosController(formulario, dao, this);
+
+        dialogo.add(formulario.getContentPane());
+        dialogo.setVisible(true);
+    }//GEN-LAST:event_btnAgregarUsuarioActionPerformed
+
+    private void btnEditarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarUsuarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnEditarUsuarioActionPerformed
+
+    private void btnAgregarUsuarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarUsuarioMouseClicked
+
+    }//GEN-LAST:event_btnAgregarUsuarioMouseClicked
 
     /**
      * @param args the command line arguments
@@ -251,6 +398,10 @@ public class frmMenu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane OpcionesLayout;
     private javax.swing.JMenuBar brrMenu;
+    private javax.swing.JButton btnAgregarUsuario;
+    private javax.swing.JButton btnEditarUsuario;
+    private javax.swing.JButton btnEliminarUsuario;
+    private javax.swing.JScrollPane jScrollUsuarios;
     private javax.swing.JPanel jpDashboard;
     private javax.swing.JPanel jpFacturas;
     private javax.swing.JPanel jpProductos;
@@ -258,5 +409,6 @@ public class frmMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jpUsuarios;
     private javax.swing.JPanel jpVentas;
     private javax.swing.JMenu opSalir;
+    private javax.swing.JTable tblUsuarios;
     // End of variables declaration//GEN-END:variables
 }
