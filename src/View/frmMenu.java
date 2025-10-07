@@ -124,7 +124,7 @@ public class frmMenu extends javax.swing.JFrame {
         opSalir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("SGVI_FERRETERIA");
+        setTitle("SGVI - FERRETERIA");
         setResizable(false);
 
         OpcionesLayout.setBackground(new java.awt.Color(238, 217, 75));
@@ -253,7 +253,7 @@ public class frmMenu extends javax.swing.JFrame {
             }
         });
 
-        btnEditarUsuario.setBackground(new java.awt.Color(255, 255, 0));
+        btnEditarUsuario.setBackground(new java.awt.Color(204, 153, 0));
         btnEditarUsuario.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnEditarUsuario.setText("Editar Usuario");
         btnEditarUsuario.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
