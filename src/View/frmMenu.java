@@ -4,6 +4,8 @@
  */
 package View;
 
+import Controller.EditarUsuarioController;
+import Controller.EliminarUsuarioController;
 import Controller.UsuariosController;
 import Custom.IconScaler;
 import Main.App;
@@ -122,6 +124,7 @@ public class frmMenu extends javax.swing.JFrame {
         opSalir = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("SGVI_FERRETERIA");
         setResizable(false);
 
         OpcionesLayout.setBackground(new java.awt.Color(238, 217, 75));
@@ -334,16 +337,26 @@ public class frmMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_opSalirMouseClicked
 
     private void btnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarUsuarioActionPerformed
-        // TODO add your handling code here:
+        JDialog dialogo = new JDialog(this, "Eliminar Usuario", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogo.setSize(500, 700);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        // Crear el formulario y el controlador CON LA REFERENCIA AL MENÚ
+        frmEliminarUsuario formulario = new frmEliminarUsuario();
+        TrabajadorDAO dao = new TrabajadorDAO();
+        EliminarUsuarioController controller = new EliminarUsuarioController(formulario, dao, this);
+
+        dialogo.add(formulario.getContentPane());
+        dialogo.setVisible(true);
     }//GEN-LAST:event_btnEliminarUsuarioActionPerformed
 
     private void btnAgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarUsuarioActionPerformed
         JDialog dialogo = new JDialog(this, "Registro de nuevo usuario", Dialog.ModalityType.APPLICATION_MODAL);
-        dialogo.setSize(480, 620);
+        dialogo.setSize(500, 620);
         dialogo.setLocationRelativeTo(this);
         dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-        // Crear el formulario y el controlador con referencia a this (frmMenu)
         frmNuevoUsuario formulario = new frmNuevoUsuario();
         TrabajadorDAO dao = new TrabajadorDAO();
         UsuariosController controller = new UsuariosController(formulario, dao, this);
@@ -353,7 +366,17 @@ public class frmMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarUsuarioActionPerformed
 
     private void btnEditarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarUsuarioActionPerformed
-        // TODO add your handling code here:
+        JDialog dialogo = new JDialog(this, "Editar Usuario", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogo.setSize(500, 700);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        frmEditarUsuario formulario = new frmEditarUsuario();
+        TrabajadorDAO dao = new TrabajadorDAO();
+        EditarUsuarioController controller = new EditarUsuarioController(formulario, dao, this);
+
+        dialogo.add(formulario.getContentPane());
+        dialogo.setVisible(true);
     }//GEN-LAST:event_btnEditarUsuarioActionPerformed
 
     private void btnAgregarUsuarioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarUsuarioMouseClicked

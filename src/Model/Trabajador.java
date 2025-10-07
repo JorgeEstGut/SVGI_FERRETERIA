@@ -2,7 +2,7 @@ package Model;
 
 public class Trabajador {
     private int id_trabajador;
-    private int id_rol;          // <- nuevo
+    private int id_rol;          
     private String usuario;
     private String clave;
     private String rol;

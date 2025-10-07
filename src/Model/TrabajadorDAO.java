@@ -18,7 +18,7 @@ public class TrabajadorDAO {
             if (rs.next()) {
                 t = new Trabajador(
                     rs.getInt("id_trabajador"),
-                    rs.getInt("id_rol"),          // ← lo nuevo
+                    rs.getInt("id_rol"),          
                     rs.getString("usuario"),
                     rs.getString("clave"),
                     rs.getString("nombre_rol"),
@@ -72,25 +72,39 @@ public class TrabajadorDAO {
             return false;
         }
     }
-
-
-
     
-    // Actualizar trabajador
-    public boolean actualizar(Trabajador t, int idRol) {
-        String sql = "UPDATE trabajadores SET usuario=?, clave=?, id_rol=? WHERE id_trabajador=?";
+    // Método para verificar si el usuario ya existe
+    public boolean existeUsuario(String usuario) {
+        String sql = "SELECT COUNT(*) FROM trabajadores WHERE usuario = ?";
         try (Connection con = Conexion.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, t.getUsuario());
-            ps.setString(2, t.getClave());
-            ps.setInt(3, idRol);
-            ps.setInt(4, t.getId_trabajador());
+            ps.setString(1, usuario);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    // Actualizar trabajador
+    public boolean actualizar(Trabajador trabajador) {
+        String sql = "UPDATE trabajadores SET nombre=?, id_rol=?, usuario=?, clave=? WHERE id_trabajador=?";
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, trabajador.getNombre());
+            ps.setInt(2, trabajador.getId_rol());
+            ps.setString(3, trabajador.getUsuario());
+            ps.setString(4, trabajador.getClave());
+            ps.setInt(5, trabajador.getId_trabajador());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
-    }
+    }  
 
     // Eliminar trabajador
     public boolean eliminar(int idTrabajador) {
@@ -103,6 +117,32 @@ public class TrabajadorDAO {
             e.printStackTrace();
             return false;
         }
+    }
+    
+    //Buscar por trabajador por ID
+    public Trabajador buscarPorId(int idTrabajador) {
+        String sql = "SELECT t.*, r.nombre_rol as rol FROM trabajadores t " +
+                     "INNER JOIN roles r ON t.id_rol = r.id_rol " +
+                     "WHERE t.id_trabajador = ?";
+        try (Connection con = Conexion.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idTrabajador);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                Trabajador t = new Trabajador();
+                t.setId_trabajador(rs.getInt("id_trabajador"));
+                t.setNombre(rs.getString("nombre"));
+                t.setUsuario(rs.getString("usuario"));
+                t.setClave(rs.getString("clave"));
+                t.setId_rol(rs.getInt("id_rol"));
+                t.setRol(rs.getString("rol"));
+                return t;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     //Listar roles

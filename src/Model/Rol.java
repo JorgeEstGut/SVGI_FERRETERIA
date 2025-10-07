@@ -11,7 +11,7 @@ public class Rol {
         this.nombre_rol = nombre_rol;
     }
 
-    public int getId_rol() {
+    public int getId_rol() {    
         return id_rol;
     }
 

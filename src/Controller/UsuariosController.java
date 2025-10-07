@@ -13,7 +13,7 @@ public class UsuariosController {
 
     private frmNuevoUsuario vista;
     private TrabajadorDAO dao;
-    private frmMenu menuPrincipal; // Referencia al menú principal
+    private frmMenu menuPrincipal;
 
     public UsuariosController(frmNuevoUsuario vista, TrabajadorDAO dao, frmMenu menuPrincipal) {
         this.vista = vista;
@@ -41,6 +41,15 @@ public class UsuariosController {
             JOptionPane.showMessageDialog(vista, "Complete todos los campos.");
             return;
         }
+        
+        if (dao.existeUsuario(usuario)) {
+            JOptionPane.showMessageDialog(vista, 
+                "❌ El nombre de usuario '" + usuario + "' ya está registrado.\n\n" +
+                "Por favor, elija un nombre de usuario diferente.", 
+                "Usuario duplicado", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         Trabajador t = new Trabajador();
         t.setUsuario(usuario);
@@ -50,11 +59,7 @@ public class UsuariosController {
 
         if (dao.insertar(t)) {
             JOptionPane.showMessageDialog(vista, "Usuario registrado correctamente.");
-
-            // Limpiar campos después del registro exitoso
             vista.limpiarCampos();
-
-            // Actualizar la tabla del menú principal
             if (menuPrincipal != null) {
                 menuPrincipal.actualizarTablaUsuarios();
             }
