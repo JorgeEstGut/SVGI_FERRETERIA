@@ -4,11 +4,16 @@
  */
 package View;
 
+import Controller.EditarProveedorController;
 import Controller.EditarUsuarioController;
+import Controller.EliminarProveedorController;
 import Controller.EliminarUsuarioController;
+import Controller.ProveedoresController;
 import Controller.UsuariosController;
 import Custom.IconScaler;
 import Main.App;
+import Model.Proveedor;
+import Model.ProveedorDAO;
 import Model.Trabajador;
 import Model.TrabajadorDAO;
 import Security.Permisos;
@@ -27,6 +32,7 @@ public class frmMenu extends javax.swing.JFrame {
         setIcons();
         aplicarPermisos(rolActual);
         cargarUsuarios();
+        cargarProveedores();
     }
     
     private void setIcons() {
@@ -95,6 +101,37 @@ public class frmMenu extends javax.swing.JFrame {
     public void actualizarTablaUsuarios() {
         cargarUsuarios();
     }
+    
+    //Cargar tabla en Panel Proveedores
+    private void cargarProveedores() {
+        ProveedorDAO dao = new ProveedorDAO();
+        java.util.List<Proveedor> lista = dao.listar();
+        
+        javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel();
+        modelo.setColumnIdentifiers(new Object[] {"ID", "Nombre", "Email"});
+        
+        for (Proveedor p : lista) {
+            modelo.addRow(new Object[]{p.getId_proveedor(), p.getNombre_proveedor(), p.getEmail()});
+        }
+        
+        tblProveedor.setModel(modelo);
+        tblProveedor.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 16));
+        tblProveedor.setRowHeight(30);
+        
+        javax.swing.table.JTableHeader header = tblProveedor.getTableHeader();
+        header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 16));
+        
+        javax.swing.table.DefaultTableCellRenderer centrado = new javax.swing.table.DefaultTableCellRenderer();
+        centrado.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        for (int i = 0; i < tblProveedor.getColumnCount(); i++){
+            tblProveedor.getColumnModel().getColumn(i).setCellRenderer(centrado);
+        }
+    }
+    
+    public void actualizarTablaProveedores() {
+        cargarProveedores();
+    }
 
 
 
@@ -113,6 +150,11 @@ public class frmMenu extends javax.swing.JFrame {
         jpProductos = new javax.swing.JPanel();
         jpVentas = new javax.swing.JPanel();
         jpProveedores = new javax.swing.JPanel();
+        jScrollProveedores = new javax.swing.JScrollPane();
+        tblProveedor = new javax.swing.JTable();
+        btnEditarProveedor = new Custom.RoundButton("Eliminar Usuario");
+        btnEliminarProveedor = new Custom.RoundButton("Eliminar Usuario");
+        btnAgregaProveedor = new Custom.RoundButton("Eliminar Usuario");
         jpFacturas = new javax.swing.JPanel();
         jpUsuarios = new javax.swing.JPanel();
         jScrollUsuarios = new javax.swing.JScrollPane();
@@ -180,15 +222,86 @@ public class frmMenu extends javax.swing.JFrame {
 
         jpProveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+        jScrollProveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+        tblProveedor.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblProveedor.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        tblProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        tblProveedor.setEnabled(false);
+        jScrollProveedores.setViewportView(tblProveedor);
+
+        btnEditarProveedor.setBackground(new java.awt.Color(204, 153, 0));
+        btnEditarProveedor.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEditarProveedor.setText("Editar Proveedor");
+        btnEditarProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditarProveedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarProveedorActionPerformed(evt);
+            }
+        });
+
+        btnEliminarProveedor.setBackground(new java.awt.Color(51, 51, 51));
+        btnEliminarProveedor.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnEliminarProveedor.setForeground(new java.awt.Color(255, 255, 255));
+        btnEliminarProveedor.setText("Eliminar Proveedor");
+        btnEliminarProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEliminarProveedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarProveedorActionPerformed(evt);
+            }
+        });
+
+        btnAgregaProveedor.setBackground(new java.awt.Color(238, 217, 75));
+        btnAgregaProveedor.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnAgregaProveedor.setText("Nuevo Proveedor");
+        btnAgregaProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAgregaProveedor.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAgregaProveedorMouseClicked(evt);
+            }
+        });
+        btnAgregaProveedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregaProveedorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jpProveedoresLayout = new javax.swing.GroupLayout(jpProveedores);
         jpProveedores.setLayout(jpProveedoresLayout);
         jpProveedoresLayout.setHorizontalGroup(
             jpProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1040, Short.MAX_VALUE)
+            .addGroup(jpProveedoresLayout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(jpProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jpProveedoresLayout.createSequentialGroup()
+                        .addComponent(btnEditarProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnEliminarProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnAgregaProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollProveedores, javax.swing.GroupLayout.PREFERRED_SIZE, 959, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(67, Short.MAX_VALUE))
         );
         jpProveedoresLayout.setVerticalGroup(
             jpProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 583, Short.MAX_VALUE)
+            .addGroup(jpProveedoresLayout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jScrollProveedores, javax.swing.GroupLayout.PREFERRED_SIZE, 504, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(10, 10, 10)
+                .addGroup(jpProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEliminarProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAgregaProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnEditarProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         OpcionesLayout.addTab("Proveedores", jpProveedores);
@@ -383,6 +496,52 @@ public class frmMenu extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnAgregarUsuarioMouseClicked
 
+    private void btnEditarProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarProveedorActionPerformed
+        JDialog dialogo = new JDialog(this, "Editar Proveedor", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogo.setSize(500, 550);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        frmEditarProveedor formulario = new frmEditarProveedor();
+        ProveedorDAO dao = new ProveedorDAO();
+        EditarProveedorController controller = new EditarProveedorController(formulario, dao, this);
+
+        dialogo.add(formulario.getContentPane());
+        dialogo.setVisible(true);
+    }//GEN-LAST:event_btnEditarProveedorActionPerformed
+
+    private void btnEliminarProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarProveedorActionPerformed
+        JDialog dialogo = new JDialog(this, "Eliminar Proveedor", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogo.setSize(500, 550);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        frmEliminarProveedor formulario = new frmEliminarProveedor();
+        ProveedorDAO dao = new ProveedorDAO();
+        EliminarProveedorController controller = new EliminarProveedorController(formulario, dao, this);
+
+        dialogo.add(formulario.getContentPane());
+        dialogo.setVisible(true);
+    }//GEN-LAST:event_btnEliminarProveedorActionPerformed
+
+    private void btnAgregaProveedorMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregaProveedorMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAgregaProveedorMouseClicked
+
+    private void btnAgregaProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregaProveedorActionPerformed
+        JDialog dialogo = new JDialog(this, "Nuevo Proveedor", Dialog.ModalityType.APPLICATION_MODAL);
+        dialogo.setSize(500, 550);
+        dialogo.setLocationRelativeTo(this);
+        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        frmNuevoProveedor formulario = new frmNuevoProveedor();
+        ProveedorDAO dao = new ProveedorDAO();
+        ProveedoresController controller = new ProveedoresController(formulario, dao, this);
+
+        dialogo.add(formulario.getContentPane());
+        dialogo.setVisible(true);
+    }//GEN-LAST:event_btnAgregaProveedorActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -421,9 +580,13 @@ public class frmMenu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane OpcionesLayout;
     private javax.swing.JMenuBar brrMenu;
+    private javax.swing.JButton btnAgregaProveedor;
     private javax.swing.JButton btnAgregarUsuario;
+    private javax.swing.JButton btnEditarProveedor;
     private javax.swing.JButton btnEditarUsuario;
+    private javax.swing.JButton btnEliminarProveedor;
     private javax.swing.JButton btnEliminarUsuario;
+    private javax.swing.JScrollPane jScrollProveedores;
     private javax.swing.JScrollPane jScrollUsuarios;
     private javax.swing.JPanel jpDashboard;
     private javax.swing.JPanel jpFacturas;
@@ -432,6 +595,7 @@ public class frmMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jpUsuarios;
     private javax.swing.JPanel jpVentas;
     private javax.swing.JMenu opSalir;
+    private javax.swing.JTable tblProveedor;
     private javax.swing.JTable tblUsuarios;
     // End of variables declaration//GEN-END:variables
 }
